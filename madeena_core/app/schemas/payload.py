@@ -4,7 +4,7 @@ This module defines the data models for incoming webhook payloads
 from messaging platforms.
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class WebhookPayload(BaseModel):
@@ -42,10 +42,8 @@ class WebhookPayload(BaseModel):
         description="Message timestamp in ISO format"
     )
 
-    class Config:
-        """Pydantic configuration."""
-        
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "platform": "whatsapp",
                 "message_text": "Tolong buatkan task untuk meeting dengan client besok jam 2 siang",
@@ -54,3 +52,4 @@ class WebhookPayload(BaseModel):
                 "timestamp": "2026-02-19T10:30:00Z"
             }
         }
+    )

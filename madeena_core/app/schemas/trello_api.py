@@ -5,7 +5,7 @@ This module defines the data models for Trello API requests and responses.
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TrelloCardCreate(BaseModel):
@@ -42,10 +42,8 @@ class TrelloCardCreate(BaseModel):
         description="Position of the card in the list"
     )
 
-    class Config:
-        """Pydantic configuration."""
-        
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "name": "Fix Production Bug",
                 "desc": "## Context\nCritical bug in payment gateway\n\n## Links\n- https://github.com/org/repo/issues/123",
@@ -54,6 +52,7 @@ class TrelloCardCreate(BaseModel):
                 "pos": "top"
             }
         }
+    )
 
 
 class TrelloCardResponse(BaseModel):
@@ -70,10 +69,8 @@ class TrelloCardResponse(BaseModel):
     idBoard: str = Field(..., description="Board ID")
     idList: str = Field(..., description="List ID")
 
-    class Config:
-        """Pydantic configuration."""
-        
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": "5abbe4b7ddc1b351ef961414",
                 "name": "Fix Production Bug",
@@ -83,3 +80,4 @@ class TrelloCardResponse(BaseModel):
                 "idList": "5abbe4b7ddc1b351ef961414"
             }
         }
+    )

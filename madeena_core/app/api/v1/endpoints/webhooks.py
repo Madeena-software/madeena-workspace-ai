@@ -10,13 +10,10 @@ from typing import Any
 from asgi_correlation_id import correlation_id
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from loguru import logger
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 
 from app.core.constants import (
     AI_PROCESSING_ERROR,
     EMPTY_MESSAGE_ERROR,
-    RATE_LIMIT_DEFAULT,
     SUCCESS_MESSAGE,
     TRELLO_ERROR,
 )
@@ -28,16 +25,12 @@ from app.services.trello_manager import TrelloService
 
 router = APIRouter()
 
-# Initialize rate limiter
-limiter = Limiter(key_func=get_remote_address)
-
 # Initialize services
 deepseek_service = DeepSeekService()
 trello_service = TrelloService()
 
 
 @router.post("/webhook", tags=["Webhooks"])
-@limiter.limit(RATE_LIMIT_DEFAULT)
 async def process_webhook(
     request: Request,
     payload: WebhookPayload,
@@ -50,7 +43,6 @@ async def process_webhook(
     
     Security:
         - Requires X-Madeena-Secret header for authentication
-        - Rate limited to 10 requests per minute
     
     Args:
         request: The FastAPI request object.

@@ -6,7 +6,7 @@ ensuring type safety and validation.
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class AIResponseSchema(BaseModel):
@@ -54,10 +54,8 @@ class AIResponseSchema(BaseModel):
         description="Extracted tags or categories"
     )
 
-    class Config:
-        """Pydantic configuration."""
-        
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "title": "Fix Production Bug",
                 "description": "Critical bug in payment gateway needs immediate attention",
@@ -68,3 +66,4 @@ class AIResponseSchema(BaseModel):
                 "tags": ["bug", "production", "payment"]
             }
         }
+    )

@@ -158,7 +158,8 @@ class TrelloService:
                     response.raise_for_status()
                     
                     logger.debug("Trello API call successful")
-                    return response.json()
+                    response_json: dict[str, Any] = response.json()
+                    return response_json
                     
                 except httpx.HTTPStatusError as e:
                     if e.response.status_code == 429:

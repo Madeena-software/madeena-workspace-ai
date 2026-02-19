@@ -91,4 +91,5 @@ class Settings(BaseSettings):
 
 
 # Global settings instance
-settings = Settings()
+# Settings are loaded from environment variables via pydantic-settings
+settings = Settings()  # type: ignore[call-arg]

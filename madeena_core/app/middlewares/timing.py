@@ -4,7 +4,7 @@ This middleware tracks and logs the processing time for each request.
 """
 
 import time
-from typing import Callable
+from typing import Any, Awaitable, Callable
 
 from fastapi import Request, Response
 from loguru import logger
@@ -18,7 +18,7 @@ class TimingMiddleware(BaseHTTPMiddleware):
     and logs it with the correlation ID for observability.
     """
 
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
         """Process the request and log timing information.
         
         Args:

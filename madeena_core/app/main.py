@@ -55,12 +55,18 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
+# Initialize rate limiter and attach to app state
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+
 # Add middlewares (order matters!)
 # 1. Correlation ID middleware (first, so it's available for all other middleware)
 app.add_middleware(
     CorrelationIdMiddleware,
     header_name="X-Correlation-ID",
-    generator=lambda: None,  # Will auto-generate if not provided
     validator=None,
     transformer=lambda x: x,
 )
@@ -72,7 +78,7 @@ app.add_middleware(SlowAPIMiddleware)
 app.add_middleware(TimingMiddleware)
 
 # Add rate limit exception handler
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore
 
 # Include API routers
 app.include_router(v1_router.router, prefix="/api/v1")
@@ -84,9 +90,10 @@ app.include_router(v1_router.router)
 if __name__ == "__main__":
     import uvicorn
     
+    # Note: Binding to 0.0.0.0 is intentional for containerized deployments
     uvicorn.run(
         "app.main:app",
-        host="0.0.0.0",
+        host="0.0.0.0",  # nosec B104
         port=8000,
         reload=settings.DEBUG,
         log_level="debug" if settings.DEBUG else "info",
